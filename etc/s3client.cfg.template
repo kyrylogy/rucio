@@ -1,0 +1,5 @@
+{
+  "endpoint_url": "https://dev-minio-1:9000",
+  "aws_access_key_id": "your-access-key-id",
+  "aws_secret_access_key": "your-secret-access-key"
+}
