@@ -2557,12 +2557,29 @@ can be found in ' + Color.BOLD + 'http://rucio.cern.ch/documentation/rse_express
     bucket_subparser = bucket_parser.add_subparsers(title="bucket_subcommands", required=True)
 
     # The bucket create command
-    bucket_create_parser = bucket_subparser.add_parser('create', help='Create a bucket.', formatter_class=argparse.RawDescriptionHelpFormatter)
+    bucket_create_parser = bucket_subparser.add_parser('create', help='Create a bucket and a corresponding folder path DID. Only works with valid credentials of format s3client.cfg.template, or existing ~/.aws/credentials and ~/.aws/config with specified region and credentials',# NOQA: E501
+                                                       formatter_class=argparse.RawDescriptionHelpFormatter,
+                                                       epilog='''Usage example
+"""""""""""""
+::
+
+    $ rucio bucket create user.dquijote:/mybucket/folder1/subfolder/
+
+    ''')
     bucket_create_parser.set_defaults(function=bucket_create)
     bucket_create_parser.add_argument('path', action='store', help='Bucket/folder path (e.g: user.dquijote:/mybucket/)')
 
     # The bucket upload command
-    bucket_upload_parser = bucket_subparser.add_parser('upload', help='Upload a file to a bucket.', formatter_class=argparse.RawDescriptionHelpFormatter)
+    bucket_upload_parser = bucket_subparser.add_parser('upload', help='Upload a file/folder to an existing bucket.', formatter_class=argparse.RawDescriptionHelpFormatter,
+                                                       epilog='''Usage example
+"""""""""""""
+::
+
+    $ rucio bucket upload --from /tmp/file.txt --to user.dquijote:/mybucket/folder1/subfolder/file.txt
+
+You can also upload a directory recursively::
+
+    $ rucio bucket upload --from /tmp/dir/ --to user.dquijote:/mybucket/folder1/subfolder/dir/''')
     bucket_upload_parser.set_defaults(function=bucket_upload)
     bucket_upload_parser.add_argument('--from', dest='from_path', action='store', default=False, help='Path to file/directory on local system.')
     bucket_upload_parser.add_argument('--to', dest='to_path', action='store', default=False, help='Save to file/directory on remote.')
