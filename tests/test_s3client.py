@@ -19,7 +19,10 @@ import pytest
 
 from rucio.client.downloadclient import DownloadClient
 from rucio.client.s3client import S3Client
-from rucio.tests.common import load_test_conf_file
+from rucio.core.did import add_did, delete_dids
+from rucio.db.sqla.constants import DIDType
+from rucio.tests.common import load_test_conf_file, did_name_generator
+from tests.conftest import mock_scope, root_account
 
 
 @pytest.fixture
@@ -39,14 +42,15 @@ def download_client():
 def test_create_bucket(s3_client):
     """S3CLIENT: Create a bucket"""
     # TODO: add more scopes for validation
-    scope = "user.dquijote:/test1/"
-    s3_client.bucket_create(scope)
+    scope = "user.dquijote:/folder/subfolder/"
+    status = s3_client.bucket_create(scope)
+    assert status == 0
 
 
 def test_upload_bucket(s3_client, file_factory):
     """S3CLIENT: Upload a bucket"""
     # TODO: download the file using DownloadClient
-    scope = "user.dquijote:/test1/"
+    scope = "user.dquijote:/folder/"
     local_file = file_factory.file_generator()
-    fn = os.path.basename(local_file)  # noqa: F841
+    fn = os.path.basename(local_file)
     s3_client.bucket_upload(from_path=local_file, to_path=scope)
